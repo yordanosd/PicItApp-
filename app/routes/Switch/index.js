@@ -21,7 +21,7 @@ const SubMenu = () => (
       { component: Me, title: 'Me' },
       { component: Stories, title: 'Stories'}
     ]}
-    initialIndex={0}
+    initialIndex={1}
     horizontal={false}
   />
 );

@@ -37,10 +37,10 @@ var Component2 = React.createClass({
 
 
 var stack = [
-  {
-    Component: Login,
-    title: 'Login'
-  },
+  // {
+  //   Component: Login,
+  //   title: 'Login'
+  // },
   {
     Component: Stories,
     title: 'Stories'
@@ -110,7 +110,7 @@ var PicItApp = React.createClass({
         push={navigator.push}
         navigator = {navigator}
         immediatelyResetRouteStack={navigator.immediatelyResetRouteStack}
-        stack = {this.stack}
+        // stack = {this.stack}
       />
     );
   }

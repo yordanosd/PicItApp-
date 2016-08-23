@@ -6,6 +6,7 @@ const {
   ShareDialog,
   AccessToken
 } = FBSDK;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
