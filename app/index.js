@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
-  View
+  View,
+  Navigator
 } from 'react-native';
 
 const FBSDK = require('react-native-fbsdk');
@@ -14,6 +15,18 @@ const {
   ShareDialog,
   AccessToken
 } = FBSDK;
+
+
+import Stories from './routes/Stories'
+
+
+var stack = [
+  {
+    Component: Stories,
+    title: 'Stories'
+  }
+];
+
 
 class PicItApp extends Component {
   constructor(props) {
@@ -27,6 +40,7 @@ class PicItApp extends Component {
     //   shareLinkContent: shareLinkContent,
     // };
   }
+
 
   render() {
     return (
@@ -42,7 +56,9 @@ class PicItApp extends Component {
                 } else {
                   AccessToken.getCurrentAccessToken().then(
                     (data) => {
-                      alert(data.accessToken.toString())
+                      console.log(this.props)
+
+                      this.props.navigator.immediatelyResetRouteStack(stack)
                     }
                   )
                 }
@@ -53,6 +69,7 @@ class PicItApp extends Component {
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {
