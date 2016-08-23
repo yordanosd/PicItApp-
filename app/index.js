@@ -17,13 +17,13 @@ const {
 } = FBSDK;
 
 
-import Stories from './routes/Stories'
+import Switch from './routes/Switch'
 
 
 var stack = [
   {
-    Component: Stories,
-    title: 'Stories'
+    Component: Switch,
+    title: 'PicIt'
   }
 ];
 
