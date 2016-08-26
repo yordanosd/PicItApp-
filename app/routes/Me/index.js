@@ -1,11 +1,42 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
   ShareDialog,
   AccessToken
 } = FBSDK;
+
+import CreateCloset from '../../components/createCloset'
+
+
+class Stories extends Component{
+
+
+
+    _navigate() {
+    	this.props.navigator.push({
+      	component: CreateCloset
+      })
+    }
+
+  renderScene(route, navigator) {
+		return <route.component navigator={navigator} {...route.passProps} />
+  }
+
+	render() {
+    console.log(this.props.navigator)
+  	return (
+    	<View>
+      	<Text style={ styles.text }>Hello From One</Text>
+      	<TouchableHighlight onPress={ console.log('Hi')} style={ styles.button }>
+				  <Text>Go To Two Three</Text>
+      	</TouchableHighlight>
+      </View>
+    )
+  }
+  };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -15,16 +46,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
   },
 });
-
-class Stories extends Component{
-render () {
-  return (
-    <View style={styles.container}>
-        <LoginButton
-          onLogoutFinished={() => alert("logout.")}/>
-      </View>
-  );
-}
-};
-
 export default Stories;

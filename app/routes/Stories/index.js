@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, ListView, ScrollView, Image,Dimensions, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, ListView, ScrollView, Image, Dimensions, TouchableHighlight, TouchableOpacity } from 'react-native';
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
   ShareDialog,
   AccessToken
 } = FBSDK;
+
 
 var photoPics = [
   "https://s-media-cache-ak0.pinimg.com/564x/8d/02/c1/8d02c1a3aff0c490067eda5c35202313.jpg",
@@ -16,8 +17,9 @@ var photoPics = [
 ]
 
 const CARD_PREVIEW_WIDTH = 20
-const CARD_MARGIN = 5;
-const CARD_WIDTH = Dimensions.get('window').width - (CARD_MARGIN + CARD_PREVIEW_WIDTH) * 2;
+const CARD_MARGIN = 10;
+const CARD_WIDTH = Dimensions.get('window').width - (CARD_MARGIN + CARD_PREVIEW_WIDTH) * 3;
+const HEIGHT = Dimensions.get('window').height - 70
 
 var responseData =
     [  // all the stories coming in // stories that need to be looped through
@@ -61,206 +63,184 @@ class Stories extends Component{
 
   constructor(props) {
      super(props);
-     this.state = {data: responseData };
+     this.allData = responseData;
+     this.state = {change: false, nextImage: false, skipImage: false, data: [], likedImage: false};
+    //  this.state.likedImage = responseData[0].outfits[0]
+     this.outfitStory = responseData[0]
+
    }
 
-   stories (){
-     var self = this
-     return responseData.map(function(outfitStory, index){
-       return (
-         <View key={index} style={[styles.story]}>
-           <Text style={styles.event}>{outfitStory.user}</Text>
-           <ScrollView
-              style={styles.contain}
-              automaticallyAdjustInsets={false}
-              horizontal={true}
-              decelerationRate={0}
-              snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
-              snapToAlignment="start"
-              contentContainerStyle={styles.content}>
-              {outfitStory.outfits.map(function(outfit, i) {
+  stories (){
+    var self = this
+    var outfitStory = responseData[0]
+    this.state.likedImage ? likedImage = this.state.likedImage : likedImage = outfitStory.outfits[0]
+    console.log(this.state.data)
+    console.log(this.outfitStory)
 
+      return (
+        <View style={[styles.story]}>
+          <Text style={styles.name}>{outfitStory.user}</Text>
+          <Image key={likedImage.id} source={{uri: likedImage.photo_url}} style={[{width: 250, height: 250}, styles.display]} resizeMode={'cover'}>
+         </Image>
+          <ScrollView
+            style={styles.contain}
+            automaticallyAdjustInsets={true}
+            horizontal={true}
+            decelerationRate={0}
+            snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
+            snapToAlignment="start"
+            contentContainerStyle={styles.content}>
+
+            {outfitStory.outfits.map(function(outfit, index) {
               return (
-                <View>
-                  <Image  key={i} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
-                  </Image>
-                  {<TouchableHighlight  underlayColor="blue" style={[styles.button]}  onPress={self.handleImageLikeClick}>
-                    <Text>+</Text>
-                  </TouchableHighlight>}
+                <View key={index}>
+                  {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
+                    <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
+                   </Image>
+                  </TouchableOpacity>}
                 </View>
               );
             })}
           </ScrollView>
           <Text style={styles.event}>{outfitStory.event}</Text>
+          <View style={styles.buttonWrapper}>
+          <TouchableOpacity underlayColor="blue" onPress={this.handleVotePress.bind(this)} style={[styles.button, styles.voteButton]}>
+            <Text >Vote</Text>
+          </TouchableOpacity>
+          <TouchableOpacity underlayColor="blue" onPress={this.handlePassPress.bind(this)} style={[styles.button, styles.passButton]}>
+            <Text >Pass</Text>
+          </TouchableOpacity>
+
+          </View>
          </View>
        )
-     });
-   }
-   likeButton () {
-    return <TouchableHighlight
-      style={styles.button}
-      underlayColor="gray"
-      onPress={this.handleImageLikeClick}
-      >
-      <Text>  +  </Text>
-        </TouchableHighlight>
-    }
+     }
 
-    handleImageLikeClick () {
-      console.log(this)
-    }
+
+
+  handleImageLikeClick (outfit) {
+    this.setState ({change: !this.change})
+    this.setState ({likedImage: outfit})
+
+    console.log(this.likedImage)
+  }
+  handleVotePress (outfit, index) {
+    this.setState ({data: responseData.shift(), likedImage: false})
+  }
+  handlePassPress (outfit, index) {
+    this.setState ({data: responseData.shift(), likedImage: false})
+  }
 
   render () {
     return (
-      <View style={[styles.container, this.border('blue')]}>
-        <ScrollView style={[styles.stories, this.border('yellow')]}>
+      <View style={[styles.container, this.border('purple')]}>
+        <ScrollView style={[styles.stories, this.border('purple')]}>
           {this.stories()}
         </ScrollView>
-        <View style={[styles.exit, this.border('pink')]}>
-          <LoginButton
-            onLogoutFinished={() => alert("logout.")}/>
-        </View>
       </View>
     );
   }
   border(color){
     return {
       borderColor: color,
-      borderWidth: 4
+      // borderWidth: 4
     }
   }
 
 }
 
-// renderRow(images) {
-//   return images.map((uri, i) => {
-//     return (
-//       <Image key={i} style={[styles.image, this.calculatedSize()]} source={{uri: uri}} />
-//     )
-//   })
-// },
-//
-// renderImagesInGroupsOf(count) {
-//   return _.chunk(IMAGE_URLS, IMAGES_PER_ROW).map((imagesForRow) => {
-//     return (
-//       <View style={styles.row}>
-//         {this.renderRow(imagesForRow)}
-//       </View>
-//     )
-//   })
-// },
-//
-// render: function() {
-//   return (
-//     <ScrollView onLayout={this.handleRotation} contentContainerStyle={styles.scrollView}>
-//       {this.renderImagesInGroupsOf(IMAGES_PER_ROW)}
-//     </ScrollView>
-//   );
-// }
-// });
+
 
 var styles = StyleSheet.create({
 
   container: {
-    marginTop: 0,
-    flex: 1,
-    alignItems: 'center',
+    flex: 5,
+    // alignItems: 'stretch',
     justifyContent: 'center',
     backgroundColor: '#FFF',
-  },
-  stories: {
-    marginTop: 60,
-    flex: 12,
-    alignSelf: 'stretch',
+    height: HEIGHT,
+    // justifyContent: 'space-around',
 
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    backgroundColor: '#FFF',
+  },
+  stories:{
+  },
+  display: {
+    borderWidth: 4,
+    backgroundColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'rgba(0,0,0,0.1)',
+    margin: 10,
+    height: 375,
+
+    // padding: 15,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 2, height: 2, },
+    shadowOpacity: 0.5,
+    // justifyContent: 'space-around',
+
+    shadowRadius: 3,
+  },
+  name: {
+    borderWidth: 1,
+    backgroundColor: '#fff',
+    borderColor: 'rgba(0,0,0,0.1)',
+    paddingTop: 5,
+    height: 30,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 2, height: 2, },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    textAlign: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    fontWeight: 'bold',
+    fontFamily: 'Cochin',
+
+
+  },
+  outfitsStrip: {
+    borderWidth: 0.5,
+    alignItems: 'center',
+    backgroundColor: 'grey',
+    justifyContent: 'center',
+    flexDirection: 'column',
+
+    alignItems: 'center',
+    borderColor: 'rgba(0,0,0,0.1)',
+    margin: 1,
+    // padding: 2,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 2, height: 2, },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   button: {
-  borderWidth: 2,
-  height: 20,
-  width: 20,
-  borderRadius: 5,
-  justifyContent: 'center',
-  alignItems: 'center'
-},
-  story: {
-    borderColor: 'red',
-    borderWidth: 4,
+    borderWidth: 2,
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  buttonWrapper: { // Green
+    flex: 1, // takes up 3/8ths of the available space
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
 
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    backgroundColor: '#FFF',
   },
-  event: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    backgroundColor: '#FDD7E4',
+  voteButton: {
+    backgroundColor: 'green',
+    borderColor: '#00CC00',
   },
-  exit: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#AAA',
+  passButton: {
+    backgroundColor: 'orange',
+    borderColor: '#CC0000',
   },
-  content: {
-  marginTop: 20,
-  paddingHorizontal: CARD_PREVIEW_WIDTH,
-  alignItems: 'center',
-  flex: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-  },
-  card: {
-    flex: 1,
-    backgroundColor: '#ccc',
-    width: CARD_WIDTH,
-    margin: CARD_MARGIN,
-    height: CARD_WIDTH,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  //
-  // navContainer: {
-  //   flex: 1,
-  //   borderColor: 'green',
-  //   borderWidth: 4
-  // },
-  //
-  // navBar: {
-  //   backgroundColor: 'white',
-  // },
-  //
-  // navBarText: {
-  //   fontSize: 16,
-  //   marginVertical: 10,
-  // },
-  //
-  // navBarTitleText: {
-  //   color: '#88888c',
-  //   fontWeight: '500',
-  //   marginVertical: 9,
-  // },
-  //
-  // navBarLeftButton: {
-  //   paddingLeft: 10,
-  // },
-  //
-  // navBarRightButton: {
-  //   paddingRight: 10,
-  // },
-  //
-  // navBarButtonText: {
-  //   color: '#5890ff'
-  // },
-
 });
 
 export default Stories;
-
-
-// {<TouchableHighlight  underlayColor="blue" style={[styles.button]}  onPress={this.handleImageClick}>
-//  <Text>+1</Text>
-// </TouchableHighlight>}

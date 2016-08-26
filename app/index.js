@@ -1,87 +1,134 @@
 
-import React, { Component } from 'react';
+
+import React from 'react';
+
+
 import {
-  AppRegistry,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View,
-  Navigator
+  ScrollView,
+  TouchableHighlight
 } from 'react-native';
 
-const FBSDK = require('react-native-fbsdk');
-const {
-  LoginButton,
-  ShareDialog,
-  AccessToken
-} = FBSDK;
 
 
-import Switch from './routes/Switch'
+import SimpleExample from './routes/Login';
+import ScrollableTabsExample from './routes/Me';
+import OverlayExample from './routes/Closet';
+import FacebookExample from './routes/Stories';
+import DynamicExample from './routes/Closet/';
 
+import FacebookTabBar from './routes/Switch/FacebookTabBar';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 
-var stack = [
-  {
-    Component: Switch,
-    title: 'PicIt'
-  }
-];
-
-
-class PicItApp extends Component {
-  constructor(props) {
-    super(props);
-    const shareLinkContent = {
-      contentType: 'link',
-      contentUrl: "https://www.facebook.com/",
-    };
-
-    // this.state = {
-    //   shareLinkContent: shareLinkContent,
-    // };
-  }
-
-
+export default React.createClass({
   render() {
-    return (
-      <View style={styles.container}>
-          <LoginButton
-            publishPermissions={["publish_actions"]}
-            onLoginFinished={
-              (error, result) => {
-                if (error) {
-                  alert("login has error: " + result.error);
-                } else if (result.isCancelled) {
-                  alert("login is cancelled.");
-                } else {
-                  AccessToken.getCurrentAccessToken().then(
-                    (data) => {
-                      console.log(this.props)
-
-                      this.props.navigator.immediatelyResetRouteStack(stack)
-                    }
-                  )
-                }
-              }
-            }
-            onLogoutFinished={() => alert("logout.")}/>
+    return <ScrollableTabView
+      style={{marginTop: 20, }}
+      initialPage={3}
+      renderTabBar={() => <FacebookTabBar />}
+      >
+      <ScrollView tabLabel="ios-paper" style={styles.tabView}>
+        <View style={styles.card}>
+          <FacebookExample/>
         </View>
-    );
-  }
-}
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+      </ScrollView>
+      <ScrollView tabLabel="ios-people" style={styles.tabView}>
+        <View style={styles.card}>
+              <DynamicExample/>
+        </View>
+      </ScrollView>
+      <ScrollView tabLabel="ios-chatboxes" style={styles.tabView}>
+        <View style={styles.card}>
+          <Text>Messenger</Text>
+        </View>
+      </ScrollView>
+      <ScrollView tabLabel="ios-notifications" style={styles.tabView}>
+        <View style={styles.card}>
+          <OverlayExample/>
+        </View>
+      </ScrollView>
+      <ScrollView tabLabel="ios-list" style={styles.tabView}>
+        <View style={styles.card}>
+        <TouchableHighlight onPress={console.log('hi') } style={ styles.button }>
+          <Text>Create Closet</Text>
+        </TouchableHighlight>
+        </View>
+      </ScrollView>
+    </ScrollableTabView>;
   },
-  shareText: {
-    fontSize: 20,
-    margin: 10,
-  }
 });
 
-export default PicItApp;
+const styles = StyleSheet.create({
+  tabView: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.01)',
+  },
+  card: {
+    // borderWidth: 1,
+    // backgroundColor: '#fff',
+    // borderColor: 'rgba(0,0,0,0.1)',
+    // margin: 5,
+    // height: 150,
+    // padding: 15,
+    // shadowColor: '#ccc',
+    // shadowOffset: { width: 2, height: 2, },
+    // shadowOpacity: 0.5,
+    // shadowRadius: 3,
+  },
+});
+
+
+
+
+// switch (route.id) {
+// case 'simple':
+//   return <Me />;
+// case 'scrollable':
+//   return <Stories/>;
+// case 'overlay':
+//   return <OverlayExample />;
+// case 'facebook':
+//   return <FacebookExample />;
+// case 'dynamic':
+//   return <DynamicExample />;
+// default:
+//   return
+// <View style={styles.container}>
+//   <TouchableOpacity
+//     style={styles.button}
+//     onPress={() => nav.push({id: 'simple', })}
+//   >
+//     <Text>Simple example</Text>
+//   </TouchableOpacity>
+//
+//   <TouchableOpacity
+//     style={styles.button}
+//     onPress={() => nav.push({id: 'scrollable', })}
+//   >
+//     <Text>Scrollable tabs example</Text>
+//   </TouchableOpacity>
+//
+//   <TouchableOpacity
+//     style={styles.button}
+//     onPress={() => nav.push({id: 'overlay', })}
+//   >
+//     <Text>Overlay example</Text>
+//   </TouchableOpacity>
+//
+//   <TouchableOpacity
+//     style={styles.button}
+//     onPress={() => nav.push({id: 'facebook', })}
+//   >
+//     <Text>Facebook tabs example</Text>
+//   </TouchableOpacity>
+//
+//   <TouchableOpacity
+//     style={styles.button}
+//     onPress={() => nav.push({id: 'dynamic', })}
+//   >
+//     <Text>Dynamic tabs example</Text>
+//   </TouchableOpacity>
+// </View>;
