@@ -15,7 +15,7 @@ import {
 
 import SimpleExample from './routes/Login';
 import ScrollableTabsExample from './routes/Me';
-import OverlayExample from './routes/Closet';
+import OverlayExample from './components/camera.js';
 import FacebookExample from './routes/Stories';
 import DynamicExample from './routes/Closet/';
 
