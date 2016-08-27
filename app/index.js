@@ -13,28 +13,16 @@ import {
   TabBarIOS,
 } from 'react-native';
 
-
-
-import SimpleExample from './routes/Login';
-import Stories from './routes/Stories';
-import Camera from './components/camera.js';
+// routes
+import CreateOutfits from './routes/CreateOutfits';
 import Closet from './routes/Closet';
+import Stories from './routes/Stories';
 
+import Camera from './components/camera.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
 
-var Test = React.createClass({
-	render() {
-  	return (
-  		<View style={styles.container}>
-  			<TouchableHighlight style={styles.button} onPress={() => this.props.navigator.pop()}>
-  				<Text>Close View</Text>
- 				</TouchableHighlight>
-  		</View>
-  	);
-	}
-});
 
 var PicItApp = React.createClass({
 
@@ -116,7 +104,7 @@ var TabBarExample = React.createClass({
               selectedTab: 'createOutfitsTab',
             });
           }}>
-          <Closet navigator={this.props.navigator}/>
+          <CreateOutfits navigator={this.props.navigator}/>
         </Icon.TabBarItemIOS>
         <Icon.TabBarItemIOS
           title="Closet"
@@ -129,7 +117,7 @@ var TabBarExample = React.createClass({
               presses: this.state.presses + 1
             });
           }}>
-          {this._renderContent('#090', 'Profile')}
+          <Closet navigator={this.props.navigator}/>
         </Icon.TabBarItemIOS>
         <Icon.TabBarItemIOS
           title="Vote"
@@ -141,7 +129,7 @@ var TabBarExample = React.createClass({
               selectedTab: 'viewStoreisTab',
             });
           }}>
-          <Stories/>
+          <Stories navigator={this.props.navigator}/>
         </Icon.TabBarItemIOS>
       </TabBarIOS>
     )
