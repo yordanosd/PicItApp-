@@ -1,71 +1,42 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, ListView, ScrollView, Image, Dimensions, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ListView, ScrollView, Image, Dimensions, TouchableHighlight, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-var photoPics = [
-  "https://s-media-cache-ak0.pinimg.com/564x/8d/02/c1/8d02c1a3aff0c490067eda5c35202313.jpg",
-  "https://s-media-cache-ak0.pinimg.com/474x/c5/66/09/c566095c603fb9927fbd483a33cc7f29.jpg",
-  "https://s-media-cache-ak0.pinimg.com/236x/be/5b/1f/be5b1fb075e65042b2f355d2c60b4f08.jpg",
-  "https://s-media-cache-ak0.pinimg.com/564x/13/63/36/136336a0cff1d84cc4f80b047b1d954c.jpg",
-
-]
 
 const CARD_PREVIEW_WIDTH = 20
 const CARD_MARGIN = 10;
 const CARD_WIDTH = Dimensions.get('window').width - (CARD_MARGIN + CARD_PREVIEW_WIDTH) * 3;
 const HEIGHT = Dimensions.get('window').height - 70
 
-var responseData =
-    [  // all the stories coming in // stories that need to be looped through
-      { // a story
-        "user": "Senhit",
-        "event": "dance",
-        "outfits":
-        [
-        { "id": 1,
-         "votes": 3,
-         "closet_id": 1,
-         "photo_url": photoPics[0]
-       },
-       { "id": 2,
-        "votes": 3,
-        "closet_id": 1,
-        "photo_url": photoPics[2]
-      },
-      { "id": 3,
-       "votes": 3,
-       "closet_id": 1,
-       "photo_url": photoPics[3]
-     },
-     ]
-     },
-     { // a story
-       "user": "Meron",
-       "event": "Wedding",
-       "outfits":
-       [
-       { "id": 4,
-        "votes": 3,
-        "closet_id": 1,
-        "photo_url": photoPics[1]
-      }]
-     }
-    ]
 
 class Stories extends Component{
 
   constructor(props) {
      super(props);
-     this.allData = responseData;
-     this.state = {change: false, nextImage: false, skipImage: false, data: [], likedImage: false};
-     this.outfitStory = responseData[0]
+     // responseData: whats returned from API. What is altered.
+     // storiesData: Refer to responseData. What is being presented on the page
+     this.state = {change: false, nextImage: false, skipImage: false, responseData: [], storiesData: [], likedImage: false, loaded : false};
+    //  this.outfitStory = storiesData[0]
    }
+
+   componentWillMount() {
+     this.fetchData();
+   }
+
+   fetchData () {
+     var API_URL = 'http://localhost:3000/users/1/outfitStories';
+     fetch(API_URL).then((response) => response.json()).then((responseData) => {
+       this.setState({
+         responseData : responseData,
+          storiesData : responseData,
+               loaded : true
+       });
+   }).done();
+ }
 
   stories (){
     var self = this
-    var outfitStory = responseData[0]
+    var outfitStory = this.state.storiesData[0]
     this.state.likedImage ? likedImage = this.state.likedImage : likedImage = outfitStory.outfits[0]
-    console.log(this.state.data)
-    console.log(this.outfitStory)
       return (
         <View style={[styles.story]}>
           <Text style={styles.name}>{outfitStory.user}</Text>
@@ -80,17 +51,19 @@ class Stories extends Component{
             snapToAlignment="start"
             contentContainerStyle={styles.content}>
             {outfitStory.outfits.map(function(outfit, index) {
-              return (
-                <View key={index}>
-                  {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
-                    <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
-                   </Image>
-                  </TouchableOpacity>}
-                </View>
-              );
+              if (outfit.photo_url){
+                return (
+                    <View key={index}>
+                      {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
+                        <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
+                       </Image>
+                      </TouchableOpacity>}
+                    </View>
+                );
+              }
             })}
           </ScrollView>
-          <Text style={styles.event}>{outfitStory.event}</Text>
+          {outfitStory.event ? <Text style={styles.event}>{outfitStory.event}</Text> : <Text style={styles.event}></Text> }
           <View style={styles.buttonWrapper}>
           <TouchableOpacity underlayColor="blue" onPress={this.handleVotePress.bind(this)} style={[styles.button, styles.voteButton]}>
             <Text >Vote</Text>
@@ -108,12 +81,16 @@ class Stories extends Component{
     console.log(this.likedImage)
   }
   handleVotePress (outfit, index) {
-    this.setState ({data: responseData.shift(), likedImage: false})
+    this.setState ({storiesData: this.state.responseData.slice(1,-1), responseData: this.state.responseData.slice(1,-1),  likedImage: false})
+    // this.fetchMoreDataCheck()
   }
   handlePassPress (outfit, index) {
-    this.setState ({data: responseData.shift(), likedImage: false})
+    this.setState ({storiesData: this.state.responseData.slice(1,-1), likedImage: false})
   }
-  render () {
+  fetchMoreDataCheck(){
+
+  }
+  renderView () {
     return (
       <View style={[styles.container, this.border('purple')]}>
         <ScrollView style={[styles.stories, this.border('purple')]}>
@@ -122,6 +99,29 @@ class Stories extends Component{
       </View>
     );
   }
+  render() {
+    if (!this.state.loaded) {
+        return this.renderLoadingView();
+    }
+
+    return this.renderView();
+  }
+
+  renderLoadingView() {
+      return (
+          <View style={styles.header}>
+              <Text style={styles.headerText}>What to Wear?</Text>
+              <View style={styles.container}>
+                  <ActivityIndicator
+                      animating={!this.state.loaded}
+                      style={[styles.activityIndicator, {height: 80}]}
+                      size="large"
+                  />
+              </View>
+          </View>
+      );
+  }
+
   border(color){
     return {
       borderColor: color,

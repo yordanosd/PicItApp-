@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
 import { View, Text, StyleSheet, ListView, ScrollView, Image, Dimensions, TouchableHighlight, TouchableOpacity } from 'react-native';
-const FBSDK = require('react-native-fbsdk');
-const {
-  LoginButton,
-  ShareDialog,
-  AccessToken
-} = FBSDK;
-
 
 var photoPics = [
   "https://s-media-cache-ak0.pinimg.com/564x/8d/02/c1/8d02c1a3aff0c490067eda5c35202313.jpg",
@@ -58,36 +51,14 @@ var responseData =
      }
     ]
 
-
 class Stories extends Component{
-
-
 
   constructor(props) {
      super(props);
-    //  this.allData = responseData;  //stoiresData = data
-     this.state = {change: false, nextImage: false, skipImage: false, storiesData: [], likedImage: false, loaded : false,};
-    //  this.state.likedImage = responseData[0].outfits[0]
+     this.allData = responseData;
+     this.state = {change: false, nextImage: false, skipImage: false, data: [], likedImage: false};
      this.outfitStory = responseData[0]
-
    }
-
-
-  componentWillMount() {
-    this.fetchData();
-  }
-
-  fetchData () {
-    var API_URL = 'http://localhost:3000/users/1/outfitStories';
-    fetch(API_URL).then((response) => response.json()).then((responseData) => {
-
-      this.setState({
-          storiesData : responseData.body,
-          loaded     : true
-      });
-
-  }).done();
-}
 
   stories (){
     var self = this
@@ -95,7 +66,6 @@ class Stories extends Component{
     this.state.likedImage ? likedImage = this.state.likedImage : likedImage = outfitStory.outfits[0]
     console.log(this.state.data)
     console.log(this.outfitStory)
-
       return (
         <View style={[styles.story]}>
           <Text style={styles.name}>{outfitStory.user}</Text>
@@ -109,7 +79,6 @@ class Stories extends Component{
             snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
             snapToAlignment="start"
             contentContainerStyle={styles.content}>
-
             {outfitStory.outfits.map(function(outfit, index) {
               return (
                 <View key={index}>
@@ -129,18 +98,13 @@ class Stories extends Component{
           <TouchableOpacity underlayColor="blue" onPress={this.handlePassPress.bind(this)} style={[styles.button, styles.passButton]}>
             <Text >Pass</Text>
           </TouchableOpacity>
-
           </View>
          </View>
        )
      }
-
-
-
   handleImageLikeClick (outfit) {
     this.setState ({change: !this.change})
     this.setState ({likedImage: outfit})
-
     console.log(this.likedImage)
   }
   handleVotePress (outfit, index) {
@@ -149,8 +113,7 @@ class Stories extends Component{
   handlePassPress (outfit, index) {
     this.setState ({data: responseData.shift(), likedImage: false})
   }
-
-  renderView () {
+  render () {
     return (
       <View style={[styles.container, this.border('purple')]}>
         <ScrollView style={[styles.stories, this.border('purple')]}>
@@ -159,71 +122,23 @@ class Stories extends Component{
       </View>
     );
   }
-
-  render() {
-    if (!this.state.loaded) {
-        return this.renderLoadingView();
-    }
-
-    return this.renderView();
-  }
-
-  renderLoadingView() {
-      return (
-          <View style={styles.header}>
-              <Text style={styles.headerText}>What to Wear?</Text>
-              <View style={styles.container}>
-                  <ActivityIndicatorIOS
-                      animating={!this.state.loaded}
-                      style={[styles.activityIndicator, {height: 80}]}
-                      size="large"
-                  />
-              </View>
-          </View>
-      );
-  }
-
   border(color){
     return {
       borderColor: color,
       // borderWidth: 4
     }
   }
-
-}
-
-
-
-    fetch('http://localhost:3000/users', data)
-    .then(response => response.json())  // promise
-    .then((responseJson) => {
-        AlertIOS.alert(
-          "POST Response",
-          "Response Body -> " + (responseJson.body)
-        )
-      })
-
-    // fetch("http://localhost:3000/users", {method: "POST", body: JSON.stringify({uid: this.props.uid})})
-    //   .then((response) => response.json())
-    //   .then((responseJson) => {
-    //     AlertIOS.alert(
-    //       "POST Response",
-    //       "Response Body -> " + (responseJson.body)
-    //     )
-    //   })
-    //   .done();
 }
 
 var styles = StyleSheet.create({
-
   container: {
     flex: 5,
     // alignItems: 'stretch',
     justifyContent: 'center',
     backgroundColor: '#FFF',
     height: HEIGHT,
-    // justifyContent: 'space-around',
-
+    alignItems: 'center',
+    marginTop: 60,
   },
   stories:{
   },
@@ -234,14 +149,9 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: 'rgba(0,0,0,0.1)',
     margin: 10,
-    height: 375,
-
-    // padding: 15,
     shadowColor: '#ccc',
     shadowOffset: { width: 2, height: 2, },
     shadowOpacity: 0.5,
-    // justifyContent: 'space-around',
-
     shadowRadius: 3,
   },
   name: {
@@ -261,8 +171,6 @@ var styles = StyleSheet.create({
     justifyContent: 'space-around',
     fontWeight: 'bold',
     fontFamily: 'Cochin',
-
-
   },
   outfitsStrip: {
     borderWidth: 0.5,
@@ -270,11 +178,9 @@ var styles = StyleSheet.create({
     backgroundColor: 'grey',
     justifyContent: 'center',
     flexDirection: 'column',
-
     alignItems: 'center',
     borderColor: 'rgba(0,0,0,0.1)',
     margin: 1,
-    // padding: 2,
     shadowColor: '#ccc',
     shadowOffset: { width: 2, height: 2, },
     shadowOpacity: 0.1,
@@ -291,10 +197,18 @@ var styles = StyleSheet.create({
   },
   buttonWrapper: { // Green
     flex: 1, // takes up 3/8ths of the available space
+    borderWidth: 1,
+    backgroundColor: '#fff',
+    borderColor: 'rgba(0,0,0,0.1)',
+    paddingTop: 5,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 2, height: 2, },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
-
+    justifyContent: 'space-around',
   },
   voteButton: {
     backgroundColor: 'green',

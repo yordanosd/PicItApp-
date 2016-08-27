@@ -19,6 +19,8 @@ import Closet from './routes/Closet';
 import Stories from './routes/Stories';
 
 import Camera from './components/camera.js';
+
+// icons for tab
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
