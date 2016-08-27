@@ -17,6 +17,7 @@ import {
 
 import PicItApp from './app/index'
 
+// import PicItApp from './app/components/camera.js';
 
 
 'use strict';

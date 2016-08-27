@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
   Image,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
+  Text
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -50,7 +51,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Example extends React.Component {
+
+class Example extends Component {
   constructor(props) {
     super(props);
 
@@ -74,11 +76,15 @@ export default class Example extends React.Component {
   takePicture() {
     if (this.camera) {
       this.camera.capture()
-        .then((data) => console.log(data))
+        .then((data) => console.log(this.handlePicture(data.path)))
         .catch(err => console.error(err));
     }
   }
 
+  handlePicture(path){
+    this.props.updateImagesState(path);
+    this.props.navigator.pop();
+  }
   switchType() {
     let newType;
     const { back, front } = Camera.constants.Type;
@@ -195,3 +201,5 @@ export default class Example extends React.Component {
     );
   }
 }
+
+export default Example;

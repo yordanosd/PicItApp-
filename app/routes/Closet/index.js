@@ -1,121 +1,182 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+import React, {Component} from 'react';
+import { View, Text, StyleSheet, Image, TouchableHighlight, Navigator, TouchableOpacity, Dimensions, TextInput } from 'react-native';
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  Navigator,
-  TouchableOpacity,
-  TouchableHighlight,
-  Dimensions
-} from 'react-native';
+// import CreateCloset from '../../components/createCloset'
+// const WIDTH = Dimensions.get('window').width  ;
+// const HEIGHT = Dimensions.get('window').height - 70
 
+cameraIcon = require('../../components/assets/ic_photo_camera_36pt.png');
 
-const WIDTH = Dimensions.get('window').width  ;
-const HEIGHT = Dimensions.get('window').height - 70
-
-
-import CreateCloset from '../../components/index.js'
-
-
-
-
-var InsideView = React.createClass({
-  render: function() {
-    return (
-      <View>
-        <TouchableOpacity onPress={() => this.props.openCreateCloset()}><Text>Open Create Closet!</Text></TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.closeCreateCloset()}><Text>Close Create Closet!</Text></TouchableOpacity>
+class CreateCloset extends Component{
+ render () {
+   return(
+    <View style={styles.container}>
+      <View style={styles.headline}>
+        <Text> Headline</Text>
       </View>
-    );
-  }
-});
-
-var Home = React.createClass({
-  render: function() {
-    return (
-      <View style={[styles.story]}>
-        <View >
-          <Text>CLOTHES THAT YOU SENT TO OTHER PEOPLE TO VOTE</Text>
+      <View style={styles.formContainer}>
+        <View style={styles.inputsContainer}>
+          <TextInput style={[styles.input]} placeholder="Event" />
+          <TextInput secureTextEntry={true} style={[styles.input]} placeholder="Message" />
         </View>
-        <View >
-          <TouchableOpacity style={styles.button} onPress={() => this.props.openCreateCloset()}><Text style={styles.buttonText}>Creat outfits for event!</Text></TouchableOpacity>
+        <View style={styles.submitButtonWrapper}>
+          <TouchableHighlight style={[styles.fullWidthButton ]} onPress={this.buttonPressed}>
+            <Text style={styles.fullWidthButtonText}>Submit</Text>
+          </TouchableHighlight>
         </View>
       </View>
-    );
-  }
-});
-
-var Closet = React.createClass({
-  getInitialState: function() {
-    return {
-      isCreateClosetOpen: false
-    }
-  },
-
-  _openCreateCloset: function() {
-    this.setState({
-      isCreateClosetOpen: true
-    });
-  },
-
-  _closeCreateCloset() {
-    this.setState({
-      isCreateClosetOpen: false
-    });
-  },
-
-  render: function() {
-    return (
-      <View style={{padding: 30}, styles.container}>
-        {this.state.isCreateClosetOpen ?  <CreateCloset openCreateCloset={this._openCreateCloset} closeCreateCloset={this._closeCreateCloset}/>  : <Home openCreateCloset={this._openCreateCloset} closeCreateCloset={this._closeCreateCloset}/>}
+      <View style={styles.cameraWrapper}>
+        <TouchableOpacity style={styles.captureButton} onPress={() => this.props.navigator.push({id: 'camera'})}>
+          <Image source={cameraIcon}/>
+        </TouchableOpacity>
       </View>
-    );
-  },
-});
+    </View>
+  )
+ }
+ buttonPressed () {
+   console.log('button was pressed!');
+ }
+};
 
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 60,
+    marginBottom: 50,
+    borderColor: 'red',
+    borderWidth: 4,
   },
-  myPage: {
-    flex: 1,
-    backgroundColor: 'purple',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    padding: 300,
-    justifyContent: 'center',
-
+  formContainer: {
+    flex: 4,
+    paddingBottom: 20,
+    borderColor: 'pink',
+    borderWidth: 4,
   },
-  text: {
-    flex: 1,
-    backgroundColor: 'orange',
-    // paddingTop: 800,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-
-    justifyContent: 'center',
-  },
-  button: {
+  fullWidthButton: {
     backgroundColor: 'purple',
     height:40,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderRadius: 120,
-
   },
-  buttonText: {
-    fontSize:16,
+  fullWidthButtonText: {
+  	fontSize:16,
     color: 'white'
   },
-});
+  inputsContainer: {
+    flex: 4,
+    borderColor: 'blue',
+    borderWidth: 4,
+  },
+  cameraWrapper: {
+    flex: 1,
+    borderColor: 'blue',
+    borderWidth: 4,
+    alignItems: 'center',
+    // flexDirection: 'column',
 
-export default Closet;
+
+  },
+  headline: {
+    flex: 1,
+
+    backgroundColor: 'purple',
+
+  }
+})
+
+export default CreateCloset;
+
+ // inputsContainer: {
+ //   flex: 4
+ // },
+ // takePhotoWrapper: {
+ //   flex: 2,
+ //   flexDirection: 'row',
+ //   justifyContent: 'center',
+ //   alignItems: 'center',
+ // },
+ // fullWidthButton: {
+ //   backgroundColor: 'purple',
+ //   height:40,
+ //   flexDirection: 'row',
+ //   justifyContent: 'center',
+ //   alignItems: 'center',
+ // },
+ // fullWidthButtonText: {
+ // 	fontSize:16,
+ //   color: 'white'
+ // },
+ // input: {
+ //   height: 40,
+ //   borderColor: 'black',
+ //   backgroundColor: 'white',
+ //   textAlign: 'center'
+ // },
+ // container: {
+ //   flex: 1,
+ //   backgroundColor: '#f0f0f0',
+ //  //  alignItems: 'stretch',
+ //  //  height: HEIGHT,
+ // },
+ // captureButton: {
+ //   flex: 1,
+ //   backgroundColor: 'black',
+ //   borderRadius: 40,
+ // },
+ // cameraWrapper: {
+ //   flex: 1,
+ //   backgroundColor: 'red'
+ // }
+// });
+
+
+//
+// var styles = StyleSheet.create({
+//  inputsContainer: {
+//    flex: 1,
+//    paddingBottom: 20,
+//  },
+//  inputsContainer: {
+//    flex: 4
+//  },
+//  takePhotoWrapper: {
+//    flex: 2,
+//    flexDirection: 'row',
+//    justifyContent: 'center',
+//    alignItems: 'center',
+//  },
+//  fullWidthButton: {
+//    backgroundColor: 'purple',
+//    height:40,
+//    flexDirection: 'row',
+//    justifyContent: 'center',
+//    alignItems: 'center',
+//  },
+//  fullWidthButtonText: {
+//  	fontSize:16,
+//    color: 'white'
+//  },
+//  input: {
+//    height: 40,
+//    borderColor: 'black',
+//    backgroundColor: 'white',
+//    textAlign: 'center'
+//  },
+//  container: {
+//    flex: 1,
+//    backgroundColor: '#f0f0f0',
+//   //  alignItems: 'stretch',
+//   //  height: HEIGHT,
+//  },
+//  captureButton: {
+//    flex: 1,
+//    backgroundColor: 'black',
+//    borderRadius: 40,
+//  },
+//  cameraWrapper: {
+//    flex: 1,
+//    backgroundColor: 'red'
+//  }
+// });
