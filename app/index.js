@@ -20,7 +20,7 @@ import Stories from './routes/Stories';
 import Camera from './components/camera.js';
 import Closet from './routes/Closet';
 
-import ScrollableTabView from 'react-native-scrollable-tab-view';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -43,6 +43,11 @@ var PicItApp = React.createClass({
       images: [1, 2, 3]
     };
   },
+
+  componentWillMount() {
+   // https://github.com/facebook/react-native/issues/1403 prevents this to work for initial load
+   Icon.getImageSource('ios-settings', 30).then((source) => this.setState({ gearIcon: source }));
+ },
 
   updateImagesState(imagePath){
     console.log(imagePath)
@@ -77,7 +82,7 @@ var PicItApp = React.createClass({
 var TabBarExample = React.createClass({
   getInitialState: function() {
     return {
-      selectedTab: 'redTab',
+      selectedTab: 'viewClosetTab',
       notifCount: 0,
       presses: 0,
     };
@@ -97,47 +102,50 @@ var TabBarExample = React.createClass({
 
   render: function() {
     return (
+
       <TabBarIOS
         tintColor="white"
-        barTintColor="darkslateblue">
-        <TabBarIOS.Item
-          title="Blue Tab"
-          systemIcon="history"
-          selected={this.state.selectedTab === 'blueTab'}
+        barTintColor="#3a0f5a">
+        <Icon.TabBarItemIOS
+          title="Create"
+          iconName="ios-camera-outline"
+          selectedIconName="ios-camera"
+          selected={this.state.selectedTab === 'createOutfitsTab'}
           onPress={() => {
             this.setState({
-              selectedTab: 'blueTab',
+              selectedTab: 'createOutfitsTab',
             });
           }}>
-          <Stories/>
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
-          systemIcon="history"
-          badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-          selected={this.state.selectedTab === 'redTab'}
+          <Closet navigator={this.props.navigator}/>
+        </Icon.TabBarItemIOS>
+        <Icon.TabBarItemIOS
+          title="Closet"
+          iconName="ios-shirt-outline"
+          selectedIconName="ios-shirt"
+          selected={this.state.selectedTab === 'viewClosetTab'}
           onPress={() => {
             this.setState({
-              selectedTab: 'redTab',
-              notifCount: this.state.notifCount + 1,
-            });
-          }}>
-        <Closet navigator={this.props.navigator}/>
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
-          systemIcon="more"
-          selected={this.state.selectedTab === 'greenTab'}
-          onPress={() => {
-            this.setState({
-              selectedTab: 'greenTab',
+              selectedTab: 'viewClosetTab',
               presses: this.state.presses + 1
             });
           }}>
-          {this._renderContent('#21551C', 'Green Tab', this.state.presses)}
-        </TabBarIOS.Item>
+          {this._renderContent('#090', 'Profile')}
+        </Icon.TabBarItemIOS>
+        <Icon.TabBarItemIOS
+          title="Vote"
+          iconName="ios-people-outline"
+          selectedIconName="ios-people"
+          selected={this.state.selectedTab === 'viewStoreisTab'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'viewStoreisTab',
+            });
+          }}>
+          <Stories/>
+        </Icon.TabBarItemIOS>
       </TabBarIOS>
-    );
-  },
-
+    )
+  }
 });
 var styles = StyleSheet.create({
   container: {
