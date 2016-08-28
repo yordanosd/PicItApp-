@@ -50,29 +50,31 @@ class Closet extends Component{
         {console.log(outfitStory)}
 
           <Text style={styles.name}>{outfitStory.id}</Text>
-          <ScrollView
-            style={styles.contain}
-            automaticallyAdjustInsets={true}
-            horizontal={true}
-            decelerationRate={0}
-            snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
-            snapToAlignment="start"
-            contentContainerStyle={styles.content}>
-            {outfitStory.outfits.map(function(outfit, index) {
-              if (outfit.photo_url){
-                return (
-                    <View key={index}>
-                    {console.log(outfit)}
+          <View style={styles.scrollContainer}>
+            <ScrollView
+              style={styles.contain}
+              automaticallyAdjustInsets={true}
+              horizontal={true}
+              decelerationRate={0}
+              snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
+              snapToAlignment="start"
+              contentContainerStyle={styles.content}>
+              {outfitStory.outfits.map(function(outfit, index) {
+                if (outfit.photo_url){
+                  return (
+                      <View key={index}>
+                      {console.log(outfit)}
 
-                      {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
-                        <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
-                       </Image>
-                      </TouchableOpacity>}
-                    </View>
-                );
-              }
-            })}
-          </ScrollView>
+                        {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
+                          <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
+                         </Image>
+                        </TouchableOpacity>}
+                      </View>
+                  );
+                }
+              })}
+            </ScrollView>
+          </View>
           {outfitStory.event ? <Text style={styles.event}>{outfitStory.event}</Text> : <Text style={styles.event}></Text> }
 
         </View>
@@ -220,6 +222,9 @@ var styles = StyleSheet.create({
   passButton: {
     backgroundColor: 'orange',
     borderColor: '#CC0000',
+  },
+  scrollContainer: {
+    alignItems: 'center',
   },
 });
 

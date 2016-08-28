@@ -72,7 +72,7 @@ var PicItApp = React.createClass({
 var TabBarExample = React.createClass({
   getInitialState: function() {
     return {
-      selectedTab: 'viewClosetTab',
+      selectedTab: 'createOutfitsTab',
       notifCount: 0,
       presses: 0,
     };
@@ -95,7 +95,7 @@ var TabBarExample = React.createClass({
 
       <TabBarIOS
         tintColor="white"
-        barTintColor="#3a0f5a">
+        barTintColor="#400080">
         <Icon.TabBarItemIOS
           title="Create"
           iconName="ios-camera-outline"
