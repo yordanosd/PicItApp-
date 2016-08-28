@@ -78,7 +78,6 @@ class Stories extends Component{
   handleImageLikeClick (outfit) {
     this.setState ({change: !this.change})
     this.setState ({likedImage: outfit})
-    console.log(this.likedImage)
   }
   handleVotePress (outfit, index) {
     this.setState ({storiesData: this.state.responseData.slice(1,-1), responseData: this.state.responseData.slice(1,-1),  likedImage: false})
@@ -144,7 +143,7 @@ var styles = StyleSheet.create({
   },
   display: {
     borderWidth: 4,
-    backgroundColor: 'blue',
+    backgroundColor: 'grey',
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'rgba(0,0,0,0.1)',

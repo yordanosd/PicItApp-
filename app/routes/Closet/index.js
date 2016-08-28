@@ -1,124 +1,130 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, ListView, ScrollView, Image, Dimensions, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ListView, ScrollView, Image, Dimensions, TouchableHighlight, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-var photoPics = [
-  "https://s-media-cache-ak0.pinimg.com/564x/8d/02/c1/8d02c1a3aff0c490067eda5c35202313.jpg",
-  "https://s-media-cache-ak0.pinimg.com/474x/c5/66/09/c566095c603fb9927fbd483a33cc7f29.jpg",
-  "https://s-media-cache-ak0.pinimg.com/236x/be/5b/1f/be5b1fb075e65042b2f355d2c60b4f08.jpg",
-  "https://s-media-cache-ak0.pinimg.com/564x/13/63/36/136336a0cff1d84cc4f80b047b1d954c.jpg",
-
-]
 
 const CARD_PREVIEW_WIDTH = 20
 const CARD_MARGIN = 10;
 const CARD_WIDTH = Dimensions.get('window').width - (CARD_MARGIN + CARD_PREVIEW_WIDTH) * 3;
 const HEIGHT = Dimensions.get('window').height - 70
 
-var responseData =
-    [  // all the stories coming in // stories that need to be looped through
-      { // a story
-        "user": "Senhit",
-        "event": "dance",
-        "outfits":
-        [
-        { "id": 1,
-         "votes": 3,
-         "closet_id": 1,
-         "photo_url": photoPics[0]
-       },
-       { "id": 2,
-        "votes": 3,
-        "closet_id": 1,
-        "photo_url": photoPics[2]
-      },
-      { "id": 3,
-       "votes": 3,
-       "closet_id": 1,
-       "photo_url": photoPics[3]
-     },
-     ]
-     },
-     { // a story
-       "user": "Meron",
-       "event": "Wedding",
-       "outfits":
-       [
-       { "id": 4,
-        "votes": 3,
-        "closet_id": 1,
-        "photo_url": photoPics[1]
-      }]
-     }
-    ]
+
+class Closet extends Component{
+
+  constructor(props) {
+    super(props);
+    // responseData: whats returned from API. What is altered.
+    // storiesData: Refer to responseData. What is being presented on the page
+    this.state = {
+               change: false,
+            nextImage: false,
+         responseData: [],
+      userStoriesData: [],
+              loaded : false};
+    }
+
+    componentWillMount() {
+      this.fetchData();
+    }
+
+  fetchData () {
+    var API_URL = 'http://localhost:3000/users/2/userStories';
+    fetch(API_URL).then((response) => response.json()).then((responseData) => {
+      this.setState({
+        responseData : responseData,
+          userStoriesData : responseData,
+               loaded : true
+      });
+    }).done();
+  }
 
 
-    class Stories extends Component{
+  userStories (){
+    var self = this
+    var userStories = this.state.userStoriesData
 
-      constructor(props) {
-         super(props);
-         this.data = responseData
-         this.state = {change: false};
-         this.likedImage = [],
-         this.imageStatus = []
-       }
+    // find image with the photo with the highest vote for each closet story.
+    return(
+    userStories.map(function(outfitStory,index){
+      return (
+        <View key={index} style={[styles.story]}>
+        {console.log(outfitStory)}
 
+          <Text style={styles.name}>{outfitStory.id}</Text>
+          <ScrollView
+            style={styles.contain}
+            automaticallyAdjustInsets={true}
+            horizontal={true}
+            decelerationRate={0}
+            snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
+            snapToAlignment="start"
+            contentContainerStyle={styles.content}>
+            {outfitStory.outfits.map(function(outfit, index) {
+              if (outfit.photo_url){
+                return (
+                    <View key={index}>
+                    {console.log(outfit)}
 
-       stories (){
-         var self = this
-         return this.data.map(function(outfitStory, index){
-           self.likedImage[index] = null;
-           return (
-             <View key={index} style={[styles.story]}>
-               <Text style={styles.event}>{outfitStory.user}</Text>
-               <ScrollView
-                  style={styles.contain}
-                  automaticallyAdjustInsets={true}
-                  horizontal={true}
-                  decelerationRate={0}
-                  snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
-                  snapToAlignment="start"
-                  contentContainerStyle={styles.content}>
-                  {outfitStory.outfits.map(function(outfit, i) {
-                    console.log(outfit)
-                  return (
-                    <View key={i}>
-                      {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(index, outfit.id)}>
+                      {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
                         <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
                        </Image>
                       </TouchableOpacity>}
                     </View>
-                  );
-                })}
-              </ScrollView>
-              <Text style={styles.event}>{outfitStory.event}</Text>
-             </View>
-           )
-         }.bind(this));
-       }
+                );
+              }
+            })}
+          </ScrollView>
+          {outfitStory.event ? <Text style={styles.event}>{outfitStory.event}</Text> : <Text style={styles.event}></Text> }
 
-      handleImageLikeClick (index, id) {
-        this.setState ({change: true})
-        this.likedImage[index] = id
-        this.data.pop()
-        this.data.length
-        console.log(this.data.length)
-      }
-
+        </View>
+      )
+    })
+  )
+  }
+  handleImageLikeClick (outfit) {
+    this.setState ({change: !this.change})
+  }
   handleVotePress (outfit, index) {
-    this.setState ({data: responseData.shift(), likedImage: false})
+    this.setState ({storiesData: this.state.responseData.slice(1,-1), responseData: this.state.responseData.slice(1,-1)})
+    // this.fetchMoreDataCheck()
   }
   handlePassPress (outfit, index) {
-    this.setState ({data: responseData.shift(), likedImage: false})
+    this.setState ({storiesData: this.state.responseData.slice(1,-1)})
   }
-  render () {
+  fetchMoreDataCheck(){
+
+  }
+  renderView () {
     return (
       <View style={[styles.container, this.border('purple')]}>
         <ScrollView style={[styles.stories, this.border('purple')]}>
-          {this.stories()}
+          {this.userStories()}
         </ScrollView>
       </View>
     );
   }
+  render() {
+    if (!this.state.loaded) {
+        return this.renderLoadingView();
+    }
+
+    return this.renderView();
+  }
+
+  renderLoadingView() {
+      return (
+          <View style={styles.header}>
+              <Text style={styles.headerText}>What to Wear?</Text>
+              <View style={styles.container}>
+                  <ActivityIndicator
+                      animating={!this.state.loaded}
+                      style={[styles.activityIndicator, {height: 80}]}
+                      size="large"
+                  />
+              </View>
+          </View>
+      );
+  }
+
   border(color){
     return {
       borderColor: color,
@@ -217,4 +223,4 @@ var styles = StyleSheet.create({
   },
 });
 
-export default Stories;
+export default Closet;
