@@ -40,6 +40,7 @@
 		420B79151D6FE81F002B9195 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 420B79051D6FE81F002B9195 /* Zocial.ttf */; };
 		420B79251D6FE899002B9195 /* ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 420B79241D6FE899002B9195 /* ionicons.ttf */; };
 		420B79261D6FE899002B9195 /* ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 420B79241D6FE899002B9195 /* ionicons.ttf */; };
+		422AC0511D74437A00DBB353 /* RCTConvert.m in Frameworks */ = {isa = PBXBuildFile; fileRef = 422AC0501D74437A00DBB353 /* RCTConvert.m */; };
 		422DD1301D7204D7002E8173 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 422DD12F1D7204D7002E8173 /* libRNVectorIcons.a */; };
 		425FAA8E1D6A385700C7B75B /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 425FAA8D1D6A385700C7B75B /* FBSDKShareKit.framework */; };
 		425FAA901D6A388800C7B75B /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 425FAA8F1D6A388800C7B75B /* FBSDKCoreKit.framework */; };
@@ -180,6 +181,7 @@
 		420B79041D6FE81F002B9195 /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
 		420B79051D6FE81F002B9195 /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zocial.ttf; sourceTree = "<group>"; };
 		420B79241D6FE899002B9195 /* ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ionicons.ttf; path = "../../../code/examples/sandbox/react-native-nba-app/node_modules/react-native-icons/fonts/ionicons.ttf"; sourceTree = "<group>"; };
+		422AC0501D74437A00DBB353 /* RCTConvert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RCTConvert.m; path = "../../../code/examples/hanzi-gold/node_modules/react-native/React/Base/RCTConvert.m"; sourceTree = "<group>"; };
 		422DD11D1D7203BE002E8173 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../../../../../../../../finalCapstone/PicItApp-/node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = BUILT_PRODUCTS_DIR; };
 		422DD12F1D7204D7002E8173 /* libRNVectorIcons.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRNVectorIcons.a; path = "../node_modules/react-native-vector-icons/build/Debug-iphoneos/libRNVectorIcons.a"; sourceTree = "<group>"; };
 		425FAA8D1D6A385700C7B75B /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = ../../../../../Documents/FacebookSDK/FBSDKShareKit.framework; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
+				422AC0511D74437A00DBB353 /* RCTConvert.m in Frameworks */,
 				425FAA901D6A388800C7B75B /* FBSDKCoreKit.framework in Frameworks */,
 				425FAA8E1D6A385700C7B75B /* FBSDKShareKit.framework in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
@@ -357,6 +360,7 @@
 		425FAA8C1D6A381300C7B75B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				422AC0501D74437A00DBB353 /* RCTConvert.m */,
 				422DD12F1D7204D7002E8173 /* libRNVectorIcons.a */,
 				425FAA911D6A38A100C7B75B /* FBSDKLoginKit.framework */,
 				425FAA8F1D6A388800C7B75B /* FBSDKCoreKit.framework */,
@@ -484,6 +488,9 @@
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
+					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = Y4TP5Z43L2;
 					};
 				};
 			};
@@ -792,6 +799,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEAD_CODE_STRIPPING = NO;
 				FRAMEWORK_SEARCH_PATHS = "~/Documents/FacebookSDK";
 				HEADER_SEARCH_PATHS = (
@@ -810,6 +819,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.PicIt;
 				PRODUCT_NAME = PicItApp;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -817,6 +827,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "~/Documents/FacebookSDK";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -834,6 +846,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.PicIt;
 				PRODUCT_NAME = PicItApp;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

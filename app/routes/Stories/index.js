@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, ListView, ScrollView, Image, Dimensions, TouchableHighlight, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ListView, ScrollView,
+  Image, Dimensions, TouchableHighlight, TouchableOpacity,
+  ActivityIndicator } from 'react-native';
 
-
+import Hearts from '../../components/hearts'
 const CARD_PREVIEW_WIDTH = 20
 const CARD_MARGIN = 10;
+const WINDOWN_WIDTH =  Dimensions.get('window').width;
 const CARD_WIDTH = Dimensions.get('window').width - (CARD_MARGIN + CARD_PREVIEW_WIDTH) * 3;
 const HEIGHT = Dimensions.get('window').height - 70
 
@@ -23,15 +26,15 @@ class Stories extends Component{
    }
 
    fetchData () {
-     var API_URL = 'http://localhost:3000/users/1/outfitStories';
+     var API_URL = 'https://rocky-hollows-53333.herokuapp.com//users/1/outfitStories';
      fetch(API_URL).then((response) => response.json()).then((responseData) => {
        this.setState({
          responseData : responseData,
           storiesData : responseData,
                loaded : true
        });
-   }).done();
- }
+     }).done();
+  }
 
   stories (){
     var self = this
@@ -39,43 +42,52 @@ class Stories extends Component{
     this.state.likedImage ? likedImage = this.state.likedImage : likedImage = outfitStory.outfits[0]
       return (
         <View style={[styles.story]}>
-          <Text style={styles.name}>{outfitStory.user}</Text>
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerText}>Stories</Text>
+        </View>
+        <View style={[styles.picturesContainer]}>
           <Image key={likedImage.id} source={{uri: likedImage.photo_url}} style={[{width: 250, height: 250}, styles.display]} resizeMode={'cover'}>
          </Image>
-          <ScrollView
-            style={styles.contain}
-            automaticallyAdjustInsets={true}
-            horizontal={true}
-            decelerationRate={0}
-            snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
-            snapToAlignment="start"
-            contentContainerStyle={styles.content}>
-            {outfitStory.outfits.map(function(outfit, index) {
-              if (outfit.photo_url){
-                return (
-                    <View key={index}>
-                      {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
-                        <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
-                       </Image>
-                      </TouchableOpacity>}
-                    </View>
-                );
-              }
-            })}
-          </ScrollView>
-          {outfitStory.event ? <Text style={styles.event}>{outfitStory.event}</Text> : <Text style={styles.event}></Text> }
-          <View style={styles.buttonWrapper}>
-          <TouchableOpacity underlayColor="blue" onPress={this.handleVotePress.bind(this)} style={[styles.button, styles.voteButton]}>
-            <Text >Vote</Text>
-          </TouchableOpacity>
-          <TouchableOpacity underlayColor="blue" onPress={this.handlePassPress.bind(this)} style={[styles.button, styles.passButton]}>
-            <Text >Pass</Text>
-          </TouchableOpacity>
+         <View style={styles.scrollContainer}>
+            <ScrollView
+              style={styles.contain}
+              automaticallyAdjustInsets={true}
+              horizontal={true}
+              decelerationRate={0}
+              snapToInterval={CARD_WIDTH + CARD_MARGIN*2}
+              snapToAlignment="start"
+              contentContainerStyle={styles.content}>
+              {outfitStory.outfits.map(function(outfit, index) {
+                if (outfit.photo_url){
+                  return (
+                      <View key={index}>
+                        {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageLikeClick(outfit)} style={styles.outfitsStrip}>
+                          <Image key={outfit.id} source={{uri: outfit.photo_url}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
+                         </Image>
+                        </TouchableOpacity>}
+                      </View>
+                  );
+                }
+              })}
+            </ScrollView>
+            </View>
+            {outfitStory.event ? <Text style={styles.event}>{outfitStory.event}</Text> : <Text style={styles.event}></Text> }
+            <View style={styles.buttonWrapper}>
+              <TouchableOpacity underlayColor="blue" onPress={this.handlePassPress.bind(this)} style={[styles.button, styles.passButton]}>
+                <Text style={styles.buttonText}>Pass</Text>
+              </TouchableOpacity>
+              <TouchableOpacity underlayColor="blue" onPress={this.handleVotePress.bind(this)} style={[styles.button, styles.voteButton]}>
+                <View style={styles.buttonSwipeVote} >
+                  <Text style={styles.buttonText} >Vote</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
          </View>
        )
      }
   handleImageLikeClick (outfit) {
+    this.passVotetoAPI(outfit)
     this.setState ({change: !this.change})
     this.setState ({likedImage: outfit})
   }
@@ -89,6 +101,16 @@ class Stories extends Component{
   fetchMoreDataCheck(){
 
   }
+  passVotetoAPI(outfit) {
+    // have access to id and closet_id
+    let closet_id = outfit.closet_id
+    let photo_id = outfit.id
+    var API_VOTE_URL = 'https://rocky-hollows-53333.herokuapp.com//closets/' + closet_id +'/photos/' + photo_id + '/vote';
+    fetch(API_VOTE_URL, {method: 'PATCH'}).then((response) => response.json()).then((responseData) => {
+
+    }).done();
+  }
+
   renderView () {
     return (
       <View style={[styles.container, this.border('purple')]}>
@@ -131,21 +153,20 @@ class Stories extends Component{
 
 var styles = StyleSheet.create({
   container: {
-    flex: 5,
-    // alignItems: 'stretch',
-    justifyContent: 'center',
-    backgroundColor: '#FFF',
+    flex: 1,
     height: HEIGHT,
-    alignItems: 'center',
     marginTop: 60,
   },
-  stories:{
+  story:{
+
   },
   display: {
     borderWidth: 4,
     backgroundColor: 'grey',
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
+
     borderColor: 'rgba(0,0,0,0.1)',
     margin: 10,
     shadowColor: '#ccc',
@@ -153,7 +174,11 @@ var styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 3,
   },
-  name: {
+  picturesContainer:{
+    backgroundColor: '#ffffe6',
+    backgroundColor: '#e0ebeb',
+  },
+  event: {
     borderWidth: 1,
     backgroundColor: '#fff',
     borderColor: 'rgba(0,0,0,0.1)',
@@ -165,11 +190,13 @@ var styles = StyleSheet.create({
     shadowRadius: 3,
     textAlign: 'center',
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'stretch',
+    alignItems: 'stretch',
     justifyContent: 'space-around',
     fontWeight: 'bold',
     fontFamily: 'Cochin',
+    alignSelf: 'stretch',
+    marginTop: 10,
   },
   outfitsStrip: {
     borderWidth: 0.5,
@@ -201,22 +228,52 @@ var styles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.1)',
     paddingTop: 5,
     shadowColor: '#ccc',
-    shadowOffset: { width: 2, height: 2, },
     shadowOpacity: 0.5,
     shadowRadius: 3,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
+    alignSelf: 'stretch',
     justifyContent: 'space-around',
   },
   voteButton: {
     backgroundColor: 'green',
-    borderColor: '#00CC00',
+    borderColor: '#d9ffb3',
+    shadowColor: '#ccc',
+    shadowOffset: { width: 2, height: 2, },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    borderWidth: 1,
+    backgroundColor: '#d9ffb3',
+    borderColor: '#d9ffb3',
   },
   passButton: {
-    backgroundColor: 'orange',
-    borderColor: '#CC0000',
+    backgroundColor: '#e6e6ff',
+    borderColor: '#e6e6ff',
   },
+  scrollContainer: {
+    alignItems: 'center',
+    borderColor: 'pink',
+  },
+  buttonText: {
+    color: 'grey',
+  },
+  headerContainer:{
+    height: 40,
+    backgroundColor: '#4D2B6F',
+    borderColor: '#4D2B6F',
+    borderWidth: 1,
+    marginBottom: 10,
+    justifyContent: 'center',
+  },
+  headerText: {
+    fontSize: 18,
+    color: 'white',
+    alignSelf: 'center',
+     fontFamily: 'Cochin',
+  },
+
 });
 
 export default Stories;
+
+// <Text style={styles.name}>{outfitStory.user}</Text>
