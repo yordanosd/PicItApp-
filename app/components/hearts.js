@@ -117,13 +117,13 @@ var HeartFloater = React.createClass({
 
       setTimeout(() => {
         this.addHeart()
-      }, 1000);
+      }, 500);
     }
   },
 
 
   addHeart: function() {
-
+    console.log("MAAADDDE ITTTTTTT")
     for (var i = 0; i < 1; i++) {
 
       startCount += 1;
@@ -143,7 +143,7 @@ var HeartFloater = React.createClass({
   },
 
   render: function() {
-
+    console.log("hearts")
       return this.renderHearts()
 
   },
@@ -151,12 +151,13 @@ var HeartFloater = React.createClass({
 
 
   renderHearts: function() {
+    console.log("Render hearts")
     return (
-
       <View style={styles1.container}>
           <View style={styles1.container}>
             {
               this.state.hearts.map(function(v, i) {
+                {console.log("YIKES hearts")}
 
                 return (
                     <AnimatedHeart

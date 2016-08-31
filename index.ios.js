@@ -16,8 +16,9 @@ import {
 
 
 import PicItApp from './app/index'
+// import PicItApp from './app/components/hearts.js';
 
-// import PicItApp from './app/components/cameraRoll.js';
+// import PicItApp from './app/components/cameraRollTutorial.js';
 // animate_slide
 
 'use strict';

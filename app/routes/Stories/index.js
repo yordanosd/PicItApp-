@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { View, Text, StyleSheet, ListView, ScrollView,
   Image, Dimensions, TouchableHighlight, TouchableOpacity,
-  ActivityIndicator } from 'react-native';
+  ActivityIndicator, Animated, } from 'react-native';
 
-import Hearts from '../../components/hearts'
+import Hearts from '../../components/hearts.js'
 const CARD_PREVIEW_WIDTH = 20
 const CARD_MARGIN = 10;
 const WINDOWN_WIDTH =  Dimensions.get('window').width;
@@ -17,7 +17,7 @@ class Stories extends Component{
      super(props);
      // responseData: whats returned from API. What is altered.
      // storiesData: Refer to responseData. What is being presented on the page
-     this.state = {change: false, nextImage: false, skipImage: false, responseData: [], storiesData: [], likedImage: false, loaded : false};
+     this.state = {heartsAnimation: false, change: false, nextImage: false, skipImage: false, responseData: [], storiesData: [], likedImage: false, loaded : false};
     //  this.outfitStory = storiesData[0]
    }
 
@@ -42,6 +42,7 @@ class Stories extends Component{
     this.state.likedImage ? likedImage = this.state.likedImage : likedImage = outfitStory.outfits[0]
       return (
         <View style={[styles.story]}>
+
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>Stories</Text>
         </View>
@@ -86,16 +87,22 @@ class Stories extends Component{
          </View>
        )
      }
+
+  handleVotePress () {
+    console.log("YO")
+    this.setState ({heartsAnimation: true})
+    setTimeout(() => {
+      this.setState ({heartsAnimation: false})
+      this.setState ({storiesData: this.state.responseData.slice(1,-1), responseData: this.state.responseData.slice(1,-1),  likedImage: false})
+    }, 1200);
+    // this.fetchMoreDataCheck()
+  }
   handleImageLikeClick (outfit) {
     this.passVotetoAPI(outfit)
     this.setState ({change: !this.change})
     this.setState ({likedImage: outfit})
   }
-  handleVotePress (outfit, index) {
-    this.setState ({storiesData: this.state.responseData.slice(1,-1), responseData: this.state.responseData.slice(1,-1),  likedImage: false})
-    // this.fetchMoreDataCheck()
-  }
-  handlePassPress (outfit, index) {
+  handlePassPress () {
     this.setState ({storiesData: this.state.responseData.slice(1,-1), likedImage: false})
   }
   fetchMoreDataCheck(){
@@ -105,7 +112,7 @@ class Stories extends Component{
     // have access to id and closet_id
     let closet_id = outfit.closet_id
     let photo_id = outfit.id
-    var API_VOTE_URL = 'https://rocky-hollows-53333.herokuapp.com//closets/' + closet_id +'/photos/' + photo_id + '/vote';
+    var API_VOTE_URL = 'https://rocky-hollows-53333.herokuapp.com/closets/' + closet_id +'/photos/' + photo_id + '/vote';
     fetch(API_VOTE_URL, {method: 'PATCH'}).then((response) => response.json()).then((responseData) => {
 
     }).done();
@@ -116,6 +123,7 @@ class Stories extends Component{
       <View style={[styles.container, this.border('purple')]}>
         <ScrollView style={[styles.stories, this.border('purple')]}>
           {this.stories()}
+          {this.state.heartsAnimation && <Hearts/> }
         </ScrollView>
       </View>
     );
@@ -150,6 +158,110 @@ class Stories extends Component{
     }
   }
 }
+
+
+
+
+var {
+  width: deviceWidth,
+  height: deviceHeight
+} = Dimensions.get('window');
+
+// var {
+//   AppRegistry,
+//   StyleSheet,
+//   View,
+//   Animated,
+//   TouchableWithoutFeedback
+// } = React;
+
+var ANIMATION_END_Y = Math.ceil(deviceHeight * .5);
+var NEGATIVE_END_Y = ANIMATION_END_Y * -1;
+var startCount = 1;
+
+function getRandomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+var Heart = React.createClass({
+    render: function() {
+        return (
+            <View {...this.props} style={[styles1.heart, this.props.style]}>
+                <View style={[styles1.leftHeart, styles1.heartShape]} />
+                <View style={[styles1.rightHeart, styles1.heartShape]} />
+            </View>
+        )
+    }
+});
+
+var AnimatedHeart = React.createClass({
+  getDefaultProps: function() {
+    return {
+      onComplete: function() {}
+    };
+  },
+  getInitialState: function() {
+    return {
+      position: new Animated.Value(0)
+    };
+  },
+  componentWillMount: function() {
+    this._yAnimation = this.state.position.interpolate({
+      inputRange: [NEGATIVE_END_Y, 0],
+      outputRange: [ANIMATION_END_Y, 0]
+    });
+
+    this._opacityAnimation = this._yAnimation.interpolate({
+      inputRange: [0, ANIMATION_END_Y],
+      outputRange: [1, 0]
+    });
+
+    this._scaleAnimation = this._yAnimation.interpolate({
+      inputRange: [0, 15, 30],
+      outputRange: [0, 1.2, 1],
+      extrapolate: 'clamp'
+    });
+
+    this._xAnimation = this._yAnimation.interpolate({
+      inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+      outputRange: [0, 15, 0]
+    })
+
+    this._rotateAnimation = this._yAnimation.interpolate({
+      inputRange: [0, ANIMATION_END_Y/4, ANIMATION_END_Y/3, ANIMATION_END_Y/2, ANIMATION_END_Y],
+      outputRange: ['0deg', '-2deg', '0deg', '2deg', '0deg']
+    });
+  },
+  componentDidMount: function() {
+
+    Animated.timing(this.state.position, {
+      duration: 2000,
+      toValue: NEGATIVE_END_Y
+    }).start(this.props.onComplete);
+  },
+  getHeartAnimationStyle: function() {
+    return {
+      transform: [
+        {translateY: this.state.position},
+        {translateX: this._xAnimation},
+        {scale: this._scaleAnimation},
+        {rotate: this._rotateAnimation}
+      ],
+      opacity: this._opacityAnimation
+    }
+  },
+  render: function() {
+    return (
+        <Animated.View style={[styles1.heartWrap, this.getHeartAnimationStyle(), this.props.style]}>
+          <Heart />
+        </Animated.View>
+    )
+  }
+})
+
+
+
+
 
 var styles = StyleSheet.create({
   container: {

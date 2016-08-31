@@ -20,9 +20,9 @@ class Stories extends Component{
 render () {
   return (
     <View style={styles.container}>
-        <LoginButton
-          onLogoutFinished={() => alert("logout.")}/>
-      </View>
+      <LoginButton
+      onLogoutFinished={() => alert("logout.")}/>
+    </View>
   );
 }
 };

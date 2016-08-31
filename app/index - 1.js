@@ -37,13 +37,24 @@ var PicItApp = React.createClass({
   componentWillMount() {
    Icon.getImageSource('ios-settings', 30).then((source) => this.setState({ gearIcon: source }));
   },
-
   updateImagesState(imagePath){
     console.log(imagePath)
     this.setState ({images: this.state.images.concat(imagePath)})
+    // var imagePath = 'http://pngimg.com/upload/butterfly_PNG1041.png'
+    // ReadImageData.readImage(imagePath, (imageBase64) => {
+    //     this.storeImageState(imageBase64);
+    //     console.log(imageBase64);
+    // });
   },
 
-  renderScene(route, navigator) {
+  storeImageState(imageBasePath){
+    this.setState ({images: this.state.images.concat(imageBasePath)})
+    console.log(this.state.images)
+    // console.log(this.state.images)
+  },
+
+
+   renderScene(route, navigator) {
     switch (route.id) {
       case 'tab-bar':
         return <PicItAppNavTab navigator={navigator} images={this.state.images} updateImagesState={this.updateImagesState}/>;
