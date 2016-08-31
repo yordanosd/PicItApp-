@@ -3,15 +3,11 @@ import { View, Text, StyleSheet, ScrollView, Image,
         TouchableHighlight, Navigator, TouchableOpacity,
         Dimensions, TextInput, PixelRatio, Platform} from 'react-native';
 
-// import CreateCloset from '../../components/createCloset'
-// const WIDTH = Dimensions.get('window').width  ;
-// const HEIGHT = Dimensions.get('window').height - 70
 var ReadImageData = require('NativeModules').ReadImageData;
 
 import ImagePicker from 'react-native-image-picker';
 import Camera from '../../components/camera.js';
 cameraIcon = require('../../components/assets/ic_photo_camera_36pt.png');
-// cameraIconWhite = require('../../components/assets/ic_photo_camera_white_72pt_2x');
 
 const CARD_PREVIEW_WIDTH = 20
 const CARD_MARGIN = 10;
@@ -24,7 +20,8 @@ class CreateCloset extends Component{
   constructor(props) {
     super(props);
     this.state = {
-        images2: []};
+        images: []
+    };
   }
 
  render () {
@@ -41,10 +38,6 @@ class CreateCloset extends Component{
             <TextInput style={styles.formInput} placeholder='Description'/>
           </View>
         </View>
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput style={[styles.input, styles.formText]} placeholder="Event" />
-        <TextInput secureTextEntry={true} style={[styles.input, styles.formText]} placeholder="Message" />
       </View>
       <View style={styles.picsWrapper}>
         <View style={styles.cameraWrapper}>
@@ -64,13 +57,8 @@ class CreateCloset extends Component{
           showsHorizontalScrollIndicator={false}
           automaticallyAdjustContentInsets={false}
           contentContainerStyle={styles.content}>
-            <View style={styles.contain}>
-
-
-              {self.state.images2 ? this.capturedImages(self.state.images2) : this.imagePlaceholder()}
-
-
-            </View>
+              {console.log(this.state.images.length)}
+              {this.state.images.length > 0 ? this.displayCapturedImages() : this.imagePlaceholder()}
           </ScrollView>
         </View>
         <Text style={styles.line1}> line1  </Text>
@@ -83,23 +71,17 @@ class CreateCloset extends Component{
     </View>
   )
  }
-  handleImageDiscardClick () {
-    console.log('button was pressed!');
-  }
-  buttonPressed () {
-    console.log('button was pressed!');
-  }
 
   selectPhotoTapped() {
-      const options = {
-        quality: 1.0,
-        maxWidth: 500,
-        maxHeight: 500,
-        storageOptions: {
-          skipBackup: true
-        }
-      };
-      var self = this;
+    const options = {
+      quality: 1.0,
+      maxWidth: 500,
+      maxHeight: 500,
+      storageOptions: {
+        skipBackup: true
+      }
+    };
+    var self = this;
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
 
@@ -113,41 +95,36 @@ class CreateCloset extends Component{
         console.log('User tapped custom button: ', response.customButton);
       }
       else {
-        var source;
-
-        // You can display the image using either:
-        // source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
-        // this.props.updateImagesState(path);
-        // this.setState ({images: this.state.images.concat(imagePath)})
-        // self.props.updateImagesState(('data:image/jpeg;base64,' + response.data))
         self.updateImagesState(('data:image/jpeg;base64,' + response.data));
-
       }
     });
   }
+
   updateImagesState(imagePath){
     console.log(imagePath)
-    this.setState ({images2: this.state.images2.concat(imagePath)})
+    this.setState ({images: this.state.images.concat(imagePath)})
   }
 
-  placeHolderImages () {
-    <View>
-      {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageDiscardClick()} style={styles.outfitsStrip}>
-          <View style={[{width: 100, height: 100}]} resizeMode={'cover'}>
-          </View>
-      </TouchableOpacity>}
-    </View>
-  }
   imagePlaceholder() {
-      <View style={[{width: 100, height: 100}]} resizeMode={'cover'}>
+    return (
+      <View style={[{width: 100, height: 100}, {backgroundColor: 'red'}]} resizeMode={'cover'}>
       </View>
+    )
   }
-  capturedImages (images){
-    {this.state.images2.map(function(picture, index){
-        <Image source={{uri: picture} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
-       </Image>
-     })
-   }
+  displayCapturedImages (){
+    console.log(this.state.images)
+    return (
+      <View style={styles.contain}>
+        {this.state.images.map(function(picture, index){
+          return (
+            <Image source={{uri: picture, isStatic: true}} style={[{width: 100, height: 100}]} resizeMode={'cover'}>
+           </Image>
+         )
+         })
+        }
+
+      </View>
+    )
   }
 };
 
@@ -169,6 +146,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   scrollContainer: {
+    flex: 1,
     alignItems: 'center',
     borderColor: 'pink',
     // borderWidth: 4,
@@ -246,7 +224,7 @@ const styles = StyleSheet.create({
      fontFamily: 'Cochin',
   },
   cameraWrapper:{
-    // flex: 2,
+    marginTop: 40,
     flexDirection: 'column',
     borderColor: 'grey',
     borderWidth: 10,
@@ -276,3 +254,21 @@ export default CreateCloset;
 // NativeModules.ReadImageData.readImage(ourImage.node.image.uri, (image)=>{
 //   console.log(image);
 // });
+
+
+
+  // placeHolderImages () {
+  //   <View>
+  //     {<TouchableOpacity  underlayColor="blue"  onPress={()=>self.handleImageDiscardClick()} style={styles.outfitsStrip}>
+  //         <View style={[{width: 100, height: 100}]} resizeMode={'cover'}>
+  //         </View>
+  //     </TouchableOpacity>}
+  //   </View>
+  // }
+  //
+  // handleImageDiscardClick () {
+  //   console.log('button was pressed!');
+  // }
+  // buttonPressed () {
+  //   console.log('button was pressed!');
+  // }
